@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import java.util.*;
 
 public class RemoteControlFragment extends Fragment {
 	private TextView mSelectTextView;
-	private TextView mWorkingTextView;
+	private Stack leftStack = new Stack();
+	private Stack rightStack = new Stack();
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -24,8 +26,6 @@ public class RemoteControlFragment extends Fragment {
 		mSelectTextView = (TextView)v.findViewById( R.id.fragment_remote_control_selectedTextView );
 		mSelectTextView.setTextAlignment( 5 ); //viewStart
 		
-		mWorkingTextView = (TextView)v.findViewById( R.id.fragment_remote_control_workingTextView );
-		
 		View.OnClickListener numberButtonListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -33,7 +33,7 @@ public class RemoteControlFragment extends Fragment {
 				String working = mSelectTextView.getText().toString(); // gets current display string
 				String text = textView.getText().toString(); // gets string value of number pressed
 				
-				
+				leftStack.push( Float.valueOf( text ) );
 				if (working.equals("0")) {
 					mSelectTextView.setText("\n" + text);
 				} else {
@@ -42,11 +42,10 @@ public class RemoteControlFragment extends Fragment {
 			}
 		};
 		
-		
 		TableLayout tableLayout = (TableLayout)v.findViewById( R.id.fragment_remote_control_tableLayout );
 		
 		int number = 1;
-		for ( int i = 4; i < tableLayout.getChildCount() - 1; i++ ) {
+		for ( int i = 3; i < tableLayout.getChildCount() - 1; i++ ) {
 			TableRow row = (TableRow)tableLayout.getChildAt(i);
 			for ( int j = 0; j < row.getChildCount(); j++) {
 				Button button = (Button)row.getChildAt(j);
@@ -62,8 +61,7 @@ public class RemoteControlFragment extends Fragment {
 		clearButton.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mSelectTextView.setText("0");
-				
+				mSelectTextView.setText("0");	
 			}
 		});
 		
@@ -72,10 +70,10 @@ public class RemoteControlFragment extends Fragment {
 		inverseButton.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String working = mWorkingTextView.getText().toString();
+				String working = mSelectTextView.getText().toString();
 				float workingFloat = Float.valueOf( working );
 				workingFloat *= -1;
-				mWorkingTextView.setText( Float.toString( workingFloat ) );
+				mSelectTextView.setText( Float.toString( workingFloat ) );
 			}
 		});
 		
@@ -85,11 +83,11 @@ public class RemoteControlFragment extends Fragment {
 		plusButton.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String working = mWorkingTextView.getText().toString();
+				String working = mSelectTextView.getText().toString();
 				String selected = mSelectTextView.getText().toString();
 				float addition = Float.valueOf(selected) + Float.valueOf(working);
 				mSelectTextView.setText( "" + addition );
-				mWorkingTextView.setText("");
+				mSelectTextView.setText("");
 			}
 		});
 		
@@ -100,10 +98,10 @@ public class RemoteControlFragment extends Fragment {
 		deleteButton.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String working = mWorkingTextView.getText().toString();
+				String working = mSelectTextView.getText().toString();
 				if ( working.length() <= 0 ) return;
 				working = working.substring(0, working.length() - 1 );
-				mWorkingTextView.setText(working);
+				mSelectTextView.setText(working);
 			}
 		});
 		
@@ -117,10 +115,13 @@ public class RemoteControlFragment extends Fragment {
 		enterButton.setOnClickListener( new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				CharSequence working = mWorkingTextView.getText();
+				String working = mSelectTextView.getText().toString();
 				if (working.length() > 0 )
+				{
+					rightStack.push( Float.valueOf( working ) );
 					mSelectTextView.setText( working );
-				mWorkingTextView.setText( "0" );
+				}
+
 			}
 		});
 		return v;

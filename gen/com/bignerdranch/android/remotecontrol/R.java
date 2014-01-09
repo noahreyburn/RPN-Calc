@@ -32,11 +32,10 @@ public final class R {
         public static final int window=0x7f020008;
     }
     public static final class id {
-        public static final int action_settings=0x7f080004;
+        public static final int action_settings=0x7f080003;
         public static final int fragmentContainer=0x7f080000;
         public static final int fragment_remote_control_selectedTextView=0x7f080002;
         public static final int fragment_remote_control_tableLayout=0x7f080001;
-        public static final int fragment_remote_control_workingTextView=0x7f080003;
     }
     public static final class layout {
         public static final int activity_fragment=0x7f030000;
